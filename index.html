@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening Chatbot...</title>
+    <script>
+        window.onload = function() {
+            // Redirect to the target website
+            window.location.href = "https://www.service-transformation.de/de";
+
+            // Wait for the chatbot button to appear and click it
+            setTimeout(function() {
+                let chatbotButton = document.querySelector(".vfrc-launcher");
+                if (chatbotButton) {
+                    chatbotButton.click();
+                } else {
+                    console.log("Chatbot button not found.");
+                }
+            }, 3000); // Adjust delay if needed
+        };
+    </script>
+</head>
+<body>
+    <p>Redirecting to chatbot...</p>
+</body>
+</html>
