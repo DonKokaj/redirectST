@@ -5,40 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opening Chatbot...</title>
     <script>
-        function waitForChatbot() {
-            let observer = new MutationObserver((mutations, obs) => {
-                let chatbotButton = document.querySelector(".vfrc-launcher");
-                if (chatbotButton) {
-                    console.log("Chatbot button detected! Clicking...");
-                    chatbotButton.click();
-                    obs.disconnect(); // Stop observing after clicking
-                }
-            });
-
-            observer.observe(document.body, { childList: true, subtree: true });
-
-            // Fallback: Try clicking every 2 seconds for 20 seconds
+        function waitForChatbotButton() {
             let attempts = 0;
             let interval = setInterval(() => {
                 let chatbotButton = document.querySelector(".vfrc-launcher");
                 if (chatbotButton) {
+                    console.log("Chatbot button found! Clicking...");
                     chatbotButton.click();
                     clearInterval(interval);
+                } else {
+                    console.log("Chatbot button not found. Retrying...");
                 }
                 attempts++;
-                if (attempts > 10) clearInterval(interval); // Stop after 20 seconds
+                if (attempts > 10) {
+                    console.log("Chatbot button not found after multiple attempts. Stopping.");
+                    clearInterval(interval);
+                }
             }, 2000);
         }
 
-        window.onload = function() {
-            console.log("Redirecting to Service Transformation...");
-            setTimeout(() => {
-                window.location.replace("https://www.service-transformation.de/de");
-            }, 100); // Short delay before redirection
+        function redirectAndStartChatbot() {
+            console.log("Redirecting to Service Transformation website...");
+            sessionStorage.setItem("startChatbot", "true"); // Store flag in session
+            window.location.replace("https://www.service-transformation.de/de");
+        }
 
-            // Wait for the chatbot after redirection
-            setTimeout(waitForChatbot, 5000); // Ensure page is fully loaded before checking
-        };
+        function checkIfChatbotShouldStart() {
+            if (sessionStorage.getItem("startChatbot") === "true") {
+                console.log("Chatbot should start. Looking for button...");
+                sessionStorage.removeItem("startChatbot"); // Prevent repeated execution
+                waitForChatbotButton();
+            }
+        }
+
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            checkIfChatbotShouldStart();
+        } else {
+            window.onload = checkIfChatbotShouldStart;
+        }
+
+        // Redirect to the website after 1 second
+        setTimeout(redirectAndStartChatbot, 1000);
     </script>
 </head>
 <body>
