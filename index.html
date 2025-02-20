@@ -24,28 +24,29 @@
             }, 2000);
         }
 
-        function redirectAndStartChatbot() {
+        function redirectToWebsite() {
             console.log("Redirecting to Service Transformation website...");
-            sessionStorage.setItem("startChatbot", "true"); // Store flag in session
+            sessionStorage.setItem("openChatbot", "true"); // Store chatbot trigger
             window.location.replace("https://www.service-transformation.de/de");
         }
 
-        function checkIfChatbotShouldStart() {
-            if (sessionStorage.getItem("startChatbot") === "true") {
-                console.log("Chatbot should start. Looking for button...");
-                sessionStorage.removeItem("startChatbot"); // Prevent repeated execution
+        function checkForChatbotTrigger() {
+            if (sessionStorage.getItem("openChatbot") === "true") {
+                console.log("Chatbot trigger detected! Opening chatbot...");
+                sessionStorage.removeItem("openChatbot"); // Prevent infinite loops
                 waitForChatbotButton();
+            } else {
+                console.log("No chatbot trigger detected.");
             }
         }
 
-        if (document.readyState === "complete" || document.readyState === "interactive") {
-            checkIfChatbotShouldStart();
+        if (window.location.href.includes("service-transformation.de")) {
+            // If already on the website, check if chatbot should open
+            window.onload = checkForChatbotTrigger;
         } else {
-            window.onload = checkIfChatbotShouldStart;
+            // Redirect to the website and trigger the chatbot
+            setTimeout(redirectToWebsite, 1000);
         }
-
-        // Redirect to the website after 1 second
-        setTimeout(redirectAndStartChatbot, 1000);
     </script>
 </head>
 <body>
