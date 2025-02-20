@@ -5,19 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opening Chatbot...</title>
     <script>
-        window.onload = function() {
-            // Redirect to the target website
-            window.location.href = "https://www.service-transformation.de/de";
+        function waitForChatbot() {
+            let observer = new MutationObserver((mutations, obs) => {
+                let chatbotButton = document.querySelector(".vfrc-launcher");
+                if (chatbotButton) {
+                    console.log("Chatbot button detected! Clicking...");
+                    chatbotButton.click();
+                    obs.disconnect(); // Stop observing after clicking
+                }
+            });
 
-            // Wait for the chatbot button to appear and click it
-            setTimeout(function() {
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // Fallback: Try clicking every 2 seconds for 20 seconds
+            let attempts = 0;
+            let interval = setInterval(() => {
                 let chatbotButton = document.querySelector(".vfrc-launcher");
                 if (chatbotButton) {
                     chatbotButton.click();
-                } else {
-                    console.log("Chatbot button not found.");
+                    clearInterval(interval);
                 }
-            }, 3000); // Adjust delay if needed
+                attempts++;
+                if (attempts > 10) clearInterval(interval); // Stop after 20 seconds
+            }, 2000);
+        }
+
+        window.onload = function() {
+            console.log("Redirecting to Service Transformation...");
+            setTimeout(() => {
+                window.location.replace("https://www.service-transformation.de/de");
+            }, 100); // Short delay before redirection
+
+            // Wait for the chatbot after redirection
+            setTimeout(waitForChatbot, 5000); // Ensure page is fully loaded before checking
         };
     </script>
 </head>
